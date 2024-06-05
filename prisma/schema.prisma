@@ -1,46 +1,42 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-model UserSettings {
-  userId   String @id
-  currency String
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Category {
-  createdAt DateTime @default(now())
-  name      String
-  userId    String
-  icon      String
-  type      String   @default("income")
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now()) @db.Date
+  name           String
+  userId         String
+  icon           String
+  type           TransactionType
+  categoryBudget CategoryBudget[]
 
   @@unique([name, userId, type])
 }
 
+enum TransactionType {
+  income
+  expense
+}
+
 model Transaction {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updateAt  DateTime @default(now())
-
-  amount      Float
-  description String
-  date        DateTime
-  userId      String
-  type        String   @default("income")
-
-  category     String
-  categoryIcon String
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  amount           Decimal
+  description      String
+  date             DateTime        @db.Date
+  userId           String
+  type             TransactionType
+  categoryBudgetId Int
+  categoryBudget   CategoryBudget  @relation(fields: [categoryBudgetId], references: [id])
+  fundId           Int
+  fund             Fund            @relation(fields: [fundId], references: [id])
 }
 
 model MonthHistory {
@@ -48,8 +44,8 @@ model MonthHistory {
   day     Int
   month   Int
   year    Int
-  income  Float
-  expense Float
+  income  Decimal
+  expense Decimal
 
   @@id([day, month, year, userId])
 }
@@ -58,8 +54,48 @@ model YearHistory {
   userId  String
   month   Int
   year    Int
-  income  Float
-  expense Float
+  income  Decimal
+  expense Decimal
 
   @@id([month, year, userId])
+}
+
+model Fund {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  budgets      FundBudget[]
+  transactions Transaction[]
+}
+
+model FundBudget {
+  id           Int      @id @default(autoincrement())
+  fundId       Int
+  createdDate  DateTime @default(now()) @db.Date
+  updatedDate  DateTime @default(now()) @db.Date
+  targetAmount Decimal  @default(0)
+  budgetAmount Decimal  @default(0)
+
+  fund Fund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+
+  @@index(fundId)
+}
+
+model CategoryBudget {
+  id           Int      @id @default(autoincrement())
+  categoryId   Int
+  createdDate  DateTime @default(now()) @db.Date
+  updatedDate  DateTime @default(now()) @db.Date
+  budgetAmount Decimal  @default(0)
+  actualAmount Decimal  @default(0)
+
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index(categoryId)
+}
+
+model UserSettings {
+  userId   String @id
+  currency String
 }
