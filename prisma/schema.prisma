@@ -11,12 +11,11 @@ model Category {
   id             Int              @id @default(autoincrement())
   createdAt      DateTime         @default(now()) @db.Date
   name           String
-  userId         String
   icon           String
   type           TransactionType
   categoryBudget CategoryBudget[]
 
-  @@unique([name, userId, type])
+  @@unique([name, type])
 }
 
 enum TransactionType {
