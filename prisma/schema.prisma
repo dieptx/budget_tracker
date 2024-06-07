@@ -8,12 +8,14 @@ datasource db {
 }
 
 model Category {
-  id             Int              @id @default(autoincrement())
-  createdAt      DateTime         @default(now()) @db.Date
-  name           String
-  icon           String
-  type           TransactionType
-  categoryBudget CategoryBudget[]
+  id                Int               @id @default(autoincrement())
+  createdAt         DateTime          @default(now()) @db.Date
+  name              String
+  icon              String
+  planAmount        Decimal           @default(0) @db.Decimal(20, 0)
+  type              TransactionType
+  categoryHistories CategoryHistory[]
+  transaction       Transaction[]
 
   @@unique([name, type])
 }
@@ -24,18 +26,18 @@ enum TransactionType {
 }
 
 model Transaction {
-  id               String          @id @default(uuid())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  amount           Decimal
-  description      String
-  date             DateTime        @db.Date
-  userId           String
-  type             TransactionType
-  categoryBudgetId Int
-  categoryBudget   CategoryBudget  @relation(fields: [categoryBudgetId], references: [id])
-  fundId           Int
-  fund             Fund            @relation(fields: [fundId], references: [id])
+  id          String          @id @default(uuid())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  amount      Decimal         @default(0) @db.Decimal(20, 0)
+  description String
+  date        DateTime        @db.Date
+  userId      String
+  type        TransactionType
+  categoryId  Int
+  category    Category        @relation(fields: [categoryId], references: [id])
+  fundId      Int
+  fund        Fund            @relation(fields: [fundId], references: [id])
 }
 
 model MonthHistory {
@@ -43,8 +45,8 @@ model MonthHistory {
   day     Int
   month   Int
   year    Int
-  income  Decimal
-  expense Decimal
+  income  Decimal @default(0) @db.Decimal(20, 0)
+  expense Decimal @default(0) @db.Decimal(20, 0)
 
   @@id([day, month, year, userId])
 }
@@ -53,43 +55,39 @@ model YearHistory {
   userId  String
   month   Int
   year    Int
-  income  Decimal
-  expense Decimal
+  income  Decimal @default(0) @db.Decimal(20, 0)
+  expense Decimal @default(0) @db.Decimal(20, 0)
 
   @@id([month, year, userId])
 }
 
 model Fund {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String?
-  budgets      FundBudget[]
-  transactions Transaction[]
+  id                Int                 @id @default(autoincrement())
+  name              String
+  description       String?
+  budget            Decimal             @default(0) @db.Decimal(20, 0)
+  transactions      Transaction[]
+  fundBudgetHistory FundBudgetHistory[]
 }
 
-model FundBudget {
-  id           Int      @id @default(autoincrement())
-  fundId       Int
-  createdDate  DateTime @default(now()) @db.Date
-  updatedDate  DateTime @default(now()) @db.Date
-  targetAmount Decimal  @default(0)
-  budgetAmount Decimal  @default(0)
+model FundBudgetHistory {
+  id          Int      @id @default(autoincrement())
+  fundId      Int
+  createdDate DateTime @default(now()) @db.Date
+  amount      Decimal  @default(0) @db.Decimal(20, 0)
 
-  fund Fund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  fund Fund @relation(fields: [fundId], references: [id])
 
   @@index(fundId)
 }
 
-model CategoryBudget {
+model CategoryHistory {
   id           Int      @id @default(autoincrement())
   categoryId   Int
+  categoryName Int
   createdDate  DateTime @default(now()) @db.Date
-  updatedDate  DateTime @default(now()) @db.Date
-  budgetAmount Decimal  @default(0)
-  actualAmount Decimal  @default(0)
-
-  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  transactions Transaction[]
+  amount       Decimal  @default(0) @db.Decimal(20, 0)
+  category     Category @relation(fields: [categoryId], references: [id])
 
   @@index(categoryId)
 }
