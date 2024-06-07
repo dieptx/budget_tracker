@@ -6,6 +6,8 @@ import {
   CreateCategorySchemaType,
   DeleteCategorySchema,
   DeleteCategorySchemaType,
+  UpdateCategorySchema,
+  UpdateCategorySchemaType,
 } from '@/schema/categories';
 import { currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
@@ -27,6 +29,30 @@ export async function CreateCategory(form: CreateCategorySchemaType) {
       name,
       icon,
       type,
+    },
+  });
+}
+
+export async function updateCategory(form: UpdateCategorySchemaType) {
+  const parsedBody = UpdateCategorySchema.safeParse(form);
+  if (!parsedBody.success) {
+    throw new Error('bad request');
+  }
+
+  const user = await currentUser();
+  if (!user) {
+    redirect('/sign-in');
+  }
+
+  const { name, icon, id, planAmount } = parsedBody.data;
+  return await prisma.category.update({
+    where: {
+      id,
+    },
+    data: {
+      name,
+      icon,
+      planAmount,
     },
   });
 }

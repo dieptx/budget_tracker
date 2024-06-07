@@ -1,18 +1,18 @@
-import { GetFormatterForCurrency } from "@/lib/helpers";
-import prisma from "@/lib/prisma";
-import { OverviewQuerySchema } from "@/schema/overview";
-import { currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { GetFormatterForCurrency } from '@/lib/helpers';
+import prisma from '@/lib/prisma';
+import { OverviewQuerySchema } from '@/schema/overview';
+import { currentUser } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 
 export async function GET(request: Request) {
   const user = await currentUser();
   if (!user) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   const { searchParams } = new URL(request.url);
-  const from = searchParams.get("from");
-  const to = searchParams.get("to");
+  const from = searchParams.get('from');
+  const to = searchParams.get('to');
 
   const queryParams = OverviewQuerySchema.safeParse({
     from,
@@ -45,7 +45,7 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
     },
   });
   if (!userSettings) {
-    throw new Error("user settings not found");
+    throw new Error('user settings not found');
   }
 
   const formatter = GetFormatterForCurrency(userSettings.currency);
@@ -59,13 +59,28 @@ async function getTransactionsHistory(userId: string, from: Date, to: Date) {
       },
     },
     orderBy: {
-      date: "desc",
+      date: 'desc',
+    },
+    include: {
+      category: {
+        select: {
+          id: true,
+          name: true,
+          icon: true,
+        },
+      },
+      fund: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
   return transactions.map((transaction) => ({
     ...transaction,
     // lets format the amount with the user currency
-    formattedAmount: formatter.format(transaction.amount),
+    formattedAmount: formatter.format(transaction.amount as unknown as number),
   }));
 }
