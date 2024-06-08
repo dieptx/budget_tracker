@@ -36,7 +36,7 @@ async function page() {
                   variant={'outline'}
                   className='border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 hover:text-white'
                 >
-                  New income 🤑
+                  Tiền về 🤑
                 </Button>
               }
               type='income'
@@ -48,7 +48,7 @@ async function page() {
                   variant={'outline'}
                   className='border-rose-500 bg-rose-950 text-white hover:bg-rose-700 hover:text-white'
                 >
-                  New expense 😤
+                  Lại chi 😤
                 </Button>
               }
               type='expense'

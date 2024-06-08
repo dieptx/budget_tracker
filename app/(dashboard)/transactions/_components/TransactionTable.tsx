@@ -56,7 +56,7 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
   {
     accessorKey: 'category',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Category' />
+      <DataTableColumnHeader column={column} title='Danh mục' />
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -71,7 +71,7 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
   {
     accessorKey: 'description',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Description' />
+      <DataTableColumnHeader column={column} title='Mô tả' />
     ),
     cell: ({ row }) => (
       <div className='capitalize'>{row.original.description}</div>
@@ -79,14 +79,14 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
   },
   {
     accessorKey: 'date',
-    header: 'Date',
+    header: 'Ngày',
     cell: ({ row }) => {
       const date = new Date(row.original.date);
-      const formattedDate = date.toLocaleDateString('default', {
+      const formattedDate = date.toLocaleDateString('vi-VN', {
         timeZone: 'UTC',
-        year: 'numeric',
-        month: '2-digit',
         day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
       return <div className='text-muted-foreground'>{formattedDate}</div>;
     },
@@ -94,7 +94,7 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
   {
     accessorKey: 'type',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Type' />
+      <DataTableColumnHeader column={column} title='Loại' />
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -115,7 +115,7 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
   {
     accessorKey: 'amount',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Amount' />
+      <DataTableColumnHeader column={column} title='Số tiền' />
     ),
     cell: ({ row }) => (
       <p className='text-md rounded-lg bg-gray-400/5 p-2 text-center font-medium'>
@@ -188,18 +188,18 @@ function TransactionTable({ from, to }: Props) {
         <div className='flex gap-2'>
           {table.getColumn('category') && (
             <DataTableFacetedFilter
-              title='Category'
+              title='Danh mục'
               column={table.getColumn('category')}
               options={categoriesOptions}
             />
           )}
           {table.getColumn('type') && (
             <DataTableFacetedFilter
-              title='Type'
+              title='Loại'
               column={table.getColumn('type')}
               options={[
-                { label: 'Income', value: 'income' },
-                { label: 'Expense', value: 'expense' },
+                { label: 'Thu nhập', value: 'income' },
+                { label: 'Chi phí', value: 'expense' },
               ]}
             />
           )}

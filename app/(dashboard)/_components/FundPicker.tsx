@@ -44,6 +44,13 @@ function FundPicker({ onChange }: Props) {
     fundsQuery.data?.find((fund: Fund) => fund.id === value?.id) ||
     fundsQuery.data?.[0];
 
+  useEffect(() => {
+    // when the value changes, call onChange callback
+    if (fundsQuery.data?.length) {
+      setValue(fundsQuery.data[0]);
+    }
+  }, [fundsQuery.data]);
+
   const successCallback = useCallback(
     (fund?: Fund) => {
       setValue(fund);
@@ -59,13 +66,13 @@ function FundPicker({ onChange }: Props) {
           variant={'outline'}
           role='combobox'
           aria-expanded={open}
-          className='w-[200px] justify-between'
+          className='w-full justify-between'
         >
           {selectedFund ? <FundRow fund={selectedFund} /> : 'Chọn quỹ'}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[200px] p-0'>
+      <PopoverContent className='w-full p-0'>
         <Command
           onSubmit={(e) => {
             e.preventDefault();
@@ -81,6 +88,7 @@ function FundPicker({ onChange }: Props) {
                 fundsQuery.data.map((fund: Fund) => (
                   <CommandItem
                     key={fund.id}
+                    className='flex justify-between'
                     onSelect={() => {
                       setValue(fund);
                       setOpen((prev) => !prev);

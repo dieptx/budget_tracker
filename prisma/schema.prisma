@@ -15,9 +15,11 @@ model Category {
   planAmount        Decimal           @default(0) @db.Decimal(20, 0)
   type              TransactionType
   categoryHistories CategoryHistory[]
-  transaction       Transaction[]
+  transactions       Transaction[]
 
   @@unique([name, type])
+
+  
 }
 
 enum TransactionType {
@@ -84,7 +86,7 @@ model FundBudgetHistory {
 model CategoryHistory {
   id           Int      @id @default(autoincrement())
   categoryId   Int
-  categoryName Int
+  categoryName String
   createdDate  DateTime @default(now()) @db.Date
   amount       Decimal  @default(0) @db.Decimal(20, 0)
   category     Category @relation(fields: [categoryId], references: [id])

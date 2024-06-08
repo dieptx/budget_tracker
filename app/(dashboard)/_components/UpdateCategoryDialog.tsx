@@ -28,7 +28,6 @@ import {
 import { TransactionType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import {
-  CreateCategorySchemaType,
   UpdateCategorySchema,
   UpdateCategorySchemaType,
 } from '@/schema/categories';
@@ -43,6 +42,7 @@ import { updateCategory } from '@/app/(dashboard)/_actions/categories';
 import { Category } from '@prisma/client';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
+import { Decimal } from '@prisma/client/runtime/library';
 
 interface Props {
   category: Category;
@@ -52,7 +52,7 @@ interface Props {
 
 function UpdateCategoryDialog({ category, successCallback, trigger }: Props) {
   const [open, setOpen] = useState(false);
-  const form = useForm<UpdateCategorySchemaType>({
+  const form = useForm<UpdateCategorySchemaType & { planAmount: Decimal }>({
     resolver: zodResolver(UpdateCategorySchema),
     defaultValues: category,
   });
@@ -63,7 +63,8 @@ function UpdateCategoryDialog({ category, successCallback, trigger }: Props) {
   const { mutate, isPending } = useMutation({
     mutationFn: updateCategory,
     onSuccess: async (data: Category) => {
-      form.reset(category);
+      console.log('🚀 ~ onSuccess: ~ data:', data);
+      form.reset();
 
       toast.success(`Cập nhật danh mục ${data.name} thành công 🎉`, {
         id: 'update-category',
@@ -85,7 +86,8 @@ function UpdateCategoryDialog({ category, successCallback, trigger }: Props) {
   });
 
   const onSubmit = useCallback(
-    (values: CreateCategorySchemaType) => {
+    (values: UpdateCategorySchemaType) => {
+      console.log('🚀 ~ UpdateCategoryDialog ~ values:', values);
       toast.loading('Đang cập nhật danh mục...', {
         id: 'update-category',
       });

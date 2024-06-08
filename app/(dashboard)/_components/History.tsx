@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import HistoryPeriodSelector from "@/app/(dashboard)/_components/HistoryPeriodSelector";
-import SkeletonWrapper from "@/components/SkeletonWrapper";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GetFormatterForCurrency } from "@/lib/helpers";
-import { Period, Timeframe } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { UserSettings } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
-import React, { useCallback, useMemo, useState } from "react";
-import CountUp from "react-countup";
+import HistoryPeriodSelector from '@/app/(dashboard)/_components/HistoryPeriodSelector';
+import SkeletonWrapper from '@/components/SkeletonWrapper';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { GetFormatterForCurrency } from '@/lib/helpers';
+import { Period, Timeframe } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { UserSettings } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import React, { useCallback, useMemo, useState } from 'react';
+import CountUp from 'react-countup';
 import {
   Bar,
   BarChart,
@@ -19,10 +19,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
 
 function History({ userSettings }: { userSettings: UserSettings }) {
-  const [timeframe, setTimeframe] = useState<Timeframe>("month");
+  const [timeframe, setTimeframe] = useState<Timeframe>('month');
   const [period, setPeriod] = useState<Period>({
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
@@ -33,7 +33,7 @@ function History({ userSettings }: { userSettings: UserSettings }) {
   }, [userSettings.currency]);
 
   const historyDataQuery = useQuery({
-    queryKey: ["overview", "history", timeframe, period],
+    queryKey: ['overview', 'history', timeframe, period],
     queryFn: () =>
       fetch(
         `/api/history-data?timeframe=${timeframe}&year=${period.year}&month=${period.month}`
@@ -44,11 +44,11 @@ function History({ userSettings }: { userSettings: UserSettings }) {
     historyDataQuery.data && historyDataQuery.data.length > 0;
 
   return (
-    <div className="container">
-      <h2 className="mt-12 text-3xl font-bold">History</h2>
-      <Card className="col-span-12 mt-2 w-full">
-        <CardHeader className="gap-2">
-          <CardTitle className="grid grid-flow-row justify-between gap-2 md:grid-flow-col">
+    <div className='container'>
+      <h2 className='mt-12 text-3xl font-bold'>Lịch sử</h2>
+      <Card className='col-span-12 mt-2 w-full'>
+        <CardHeader className='gap-2'>
+          <CardTitle className='grid grid-flow-row justify-between gap-2 md:grid-flow-col'>
             <HistoryPeriodSelector
               period={period}
               setPeriod={setPeriod}
@@ -56,20 +56,20 @@ function History({ userSettings }: { userSettings: UserSettings }) {
               setTimeframe={setTimeframe}
             />
 
-            <div className="flex h-10 gap-2">
+            <div className='flex h-10 gap-2'>
               <Badge
-                variant={"outline"}
-                className="flex items-center gap-2 text-sm"
+                variant={'outline'}
+                className='flex items-center gap-2 text-sm'
               >
-                <div className="h-4 w-4 rounded-full bg-emerald-500"></div>
-                Income
+                <div className='h-4 w-4 rounded-full bg-emerald-500'></div>
+                Thu nhập
               </Badge>
               <Badge
-                variant={"outline"}
-                className="flex items-center gap-2 text-sm"
+                variant={'outline'}
+                className='flex items-center gap-2 text-sm'
               >
-                <div className="h-4 w-4 rounded-full bg-red-500"></div>
-                Expense
+                <div className='h-4 w-4 rounded-full bg-red-500'></div>
+                Chi phí
               </Badge>
             </div>
           </CardTitle>
@@ -77,46 +77,46 @@ function History({ userSettings }: { userSettings: UserSettings }) {
         <CardContent>
           <SkeletonWrapper isLoading={historyDataQuery.isFetching}>
             {dataAvailable && (
-              <ResponsiveContainer width={"100%"} height={300}>
+              <ResponsiveContainer width={'100%'} height={300}>
                 <BarChart
                   height={300}
                   data={historyDataQuery.data}
                   barCategoryGap={5}
                 >
                   <defs>
-                    <linearGradient id="incomeBar" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id='incomeBar' x1='0' y1='0' x2='0' y2='1'>
                       <stop
-                        offset={"0"}
-                        stopColor="#10b981"
-                        stopOpacity={"1"}
+                        offset={'0'}
+                        stopColor='#10b981'
+                        stopOpacity={'1'}
                       />
                       <stop
-                        offset={"1"}
-                        stopColor="#10b981"
-                        stopOpacity={"0"}
+                        offset={'1'}
+                        stopColor='#10b981'
+                        stopOpacity={'0'}
                       />
                     </linearGradient>
 
-                    <linearGradient id="expenseBar" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id='expenseBar' x1='0' y1='0' x2='0' y2='1'>
                       <stop
-                        offset={"0"}
-                        stopColor="#ef4444"
-                        stopOpacity={"1"}
+                        offset={'0'}
+                        stopColor='#ef4444'
+                        stopOpacity={'1'}
                       />
                       <stop
-                        offset={"1"}
-                        stopColor="#ef4444"
-                        stopOpacity={"0"}
+                        offset={'1'}
+                        stopColor='#ef4444'
+                        stopOpacity={'0'}
                       />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
-                    strokeDasharray="5 5"
-                    strokeOpacity={"0.2"}
+                    strokeDasharray='5 5'
+                    strokeOpacity={'0.2'}
                     vertical={false}
                   />
                   <XAxis
-                    stroke="#888888"
+                    stroke='#888888'
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
@@ -124,35 +124,35 @@ function History({ userSettings }: { userSettings: UserSettings }) {
                     dataKey={(data) => {
                       const { year, month, day } = data;
                       const date = new Date(year, month, day || 1);
-                      if (timeframe === "year") {
-                        return date.toLocaleDateString("default", {
-                          month: "long",
+                      if (timeframe === 'year') {
+                        return date.toLocaleDateString('default', {
+                          month: 'long',
                         });
                       }
-                      return date.toLocaleDateString("default", {
-                        day: "2-digit",
+                      return date.toLocaleDateString('default', {
+                        day: '2-digit',
                       });
                     }}
                   />
                   <YAxis
-                    stroke="#888888"
+                    stroke='#888888'
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                   />
                   <Bar
-                    dataKey={"income"}
-                    label="Income"
-                    fill="url(#incomeBar)"
+                    dataKey={'income'}
+                    label='Thu nhập'
+                    fill='url(#incomeBar)'
                     radius={4}
-                    className="cursor-pointer"
+                    className='cursor-pointer'
                   />
                   <Bar
-                    dataKey={"expense"}
-                    label="Expense"
-                    fill="url(#expenseBar)"
+                    dataKey={'expense'}
+                    label='Chi phí'
+                    fill='url(#expenseBar)'
                     radius={4}
-                    className="cursor-pointer"
+                    className='cursor-pointer'
                   />
                   <Tooltip
                     cursor={{ opacity: 0.1 }}
@@ -164,10 +164,11 @@ function History({ userSettings }: { userSettings: UserSettings }) {
               </ResponsiveContainer>
             )}
             {!dataAvailable && (
-              <Card className="flex h-[300px] flex-col items-center justify-center bg-background">
-                No data for the selected period
-                <p className="text-sm text-muted-foreground">
-                  Try selecting a different period or adding new transactions
+              <Card className='flex h-[300px] flex-col items-center justify-center bg-background'>
+                Không có dữ liệu cho khoảng thời gian này
+                <p className='text-sm text-muted-foreground'>
+                  Hãy thử chọn một khoảng thời gian khác hoặc thêm các giao dịch
+                  mới.
                 </p>
               </Card>
             )}
@@ -187,27 +188,27 @@ function CustomTooltip({ active, payload, formatter }: any) {
   const { expense, income } = data;
 
   return (
-    <div className="min-w-[300px] rounded border bg-background p-4">
+    <div className='min-w-[300px] rounded border bg-background p-4'>
       <TooltipRow
         formatter={formatter}
-        label="Expense"
+        label='Chi phí'
         value={expense}
-        bgColor="bg-red-500"
-        textColor="text-red-500"
+        bgColor='bg-red-500'
+        textColor='text-red-500'
       />
       <TooltipRow
         formatter={formatter}
-        label="Income"
+        label='Thu nhập'
         value={income}
-        bgColor="bg-emerald-500"
-        textColor="text-emerald-500"
+        bgColor='bg-emerald-500'
+        textColor='text-emerald-500'
       />
       <TooltipRow
         formatter={formatter}
-        label="Balance"
+        label='Số dư'
         value={income - expense}
-        bgColor="bg-gray-100"
-        textColor="text-foreground"
+        bgColor='bg-gray-100'
+        textColor='text-foreground'
       />
     </div>
   );
@@ -234,18 +235,18 @@ function TooltipRow({
   );
 
   return (
-    <div className="flex items-center gap-2">
-      <div className={cn("h-4 w-4 rounded-full", bgColor)} />
-      <div className="flex w-full justify-between">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <div className={cn("text-sm font-bold", textColor)}>
+    <div className='flex items-center gap-2'>
+      <div className={cn('h-4 w-4 rounded-full', bgColor)} />
+      <div className='flex w-full justify-between'>
+        <p className='text-sm text-muted-foreground'>{label}</p>
+        <div className={cn('text-sm font-bold', textColor)}>
           <CountUp
             duration={0.5}
             preserveValue
             end={value}
             decimals={0}
             formattingFn={formattingFn}
-            className="text-sm"
+            className='text-sm'
           />
         </div>
       </div>

@@ -15,7 +15,7 @@ import { redirect } from 'next/navigation';
 export async function CreateCategory(form: CreateCategorySchemaType) {
   const parsedBody = CreateCategorySchema.safeParse(form);
   if (!parsedBody.success) {
-    throw new Error('bad request');
+    throw new Error('Bad request');
   }
 
   const user = await currentUser();
@@ -23,14 +23,23 @@ export async function CreateCategory(form: CreateCategorySchemaType) {
     redirect('/sign-in');
   }
 
-  const { name, icon, type } = parsedBody.data;
-  return await prisma.category.create({
-    data: {
-      name,
-      icon,
-      type,
-    },
+  const result = await prisma.category.create({
+    data: parsedBody.data,
   });
+
+  try {
+    prisma.categoryHistory.create({
+      data: {
+        categoryId: result.id,
+        categoryName: parsedBody.data.name,
+        amount: parsedBody.data.planAmount,
+      },
+    });
+  } catch (error) {
+    console.log('🚀 ~ [LOG] Can not create category history ~ error:', error);
+  }
+
+  return result;
 }
 
 export async function updateCategory(form: UpdateCategorySchemaType) {
@@ -45,7 +54,7 @@ export async function updateCategory(form: UpdateCategorySchemaType) {
   }
 
   const { name, icon, id, planAmount } = parsedBody.data;
-  return await prisma.category.update({
+  const result = await prisma.category.update({
     where: {
       id,
     },
@@ -55,6 +64,20 @@ export async function updateCategory(form: UpdateCategorySchemaType) {
       planAmount,
     },
   });
+  console.log('🚀 ~ updateCategory ~ parsedBody.data:', parsedBody.data);
+
+  try {
+    await prisma.categoryHistory.create({
+      data: {
+        categoryId: id,
+        categoryName: name,
+        amount: planAmount,
+      },
+    });
+  } catch (error) {
+    console.log('🚀 ~ [LOG] Can not create category history ~ error:', error);
+  }
+  return result;
 }
 
 export async function DeleteCategory(form: DeleteCategorySchemaType) {

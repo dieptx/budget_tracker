@@ -57,6 +57,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
     resolver: zodResolver(CreateTransactionSchema),
     defaultValues: {
       type,
+      fund: {},
       date: new Date(),
     },
   });
@@ -123,73 +124,72 @@ function CreateTransactionDialog({ trigger, type }: Props) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Create a new{' '}
+            Tạo giao dịch{' '}
             <span
               className={cn(
                 'm-1',
                 type === 'income' ? 'text-emerald-500' : 'text-red-500'
               )}
             >
-              {type}
+              {type === 'income' ? 'thu nhập' : 'chi phí'}
             </span>
-            transaction
+            mới
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form className='space-y-4' onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
-              name='fund'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel>Quỹ</FormLabel>
-                  <FormControl>
-                    <FundPicker onChange={handleFundChange} />
-                  </FormControl>
-                  <FormDescription>
-                    Select a category for this transaction
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name='description'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Mô tả</FormLabel>
                   <FormControl>
                     <Input defaultValue={''} {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Transaction description (optional)
-                  </FormDescription>
+                  <FormDescription>Mô tả giao dịch (optional)</FormDescription>
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='amount'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input defaultValue={0} type='number' {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Transaction amount (required)
-                  </FormDescription>
-                </FormItem>
-              )}
-            />
-
-            <div className='flex items-center justify-between gap-2'>
+            <div className='grid gap-2 grid-cols-2'>
+              <FormField
+                control={form.control}
+                name='fund'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quỹ</FormLabel>
+                    <FormControl>
+                      <FundPicker onChange={handleFundChange} />
+                    </FormControl>
+                    <FormDescription>
+                      Chọn một quỹ cho giao dịch này
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='amount'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Số tiền</FormLabel>
+                    <FormControl>
+                      <Input defaultValue={0} type='number' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Số tiền giao dịch (required)
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className='grid gap-2 grid-cols-2'>
               <FormField
                 control={form.control}
                 name='category'
                 render={({ field }) => (
                   <FormItem className='flex flex-col'>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel>Danh mục</FormLabel>
                     <FormControl>
                       <CategoryPicker
                         type={type}
@@ -197,7 +197,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                       />
                     </FormControl>
                     <FormDescription>
-                      Select a category for this transaction
+                      Chọn một danh mục cho giao dịch này
                     </FormDescription>
                   </FormItem>
                 )}
@@ -208,21 +208,21 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                 name='date'
                 render={({ field }) => (
                   <FormItem className='flex flex-col'>
-                    <FormLabel>Transaction date</FormLabel>
+                    <FormLabel>Ngày giao dịch</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={'outline'}
                             className={cn(
-                              'w-[200px] pl-3 text-left font-normal',
+                              'w-full pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value ? (
                               format(field.value, 'PPP')
                             ) : (
-                              <span>Pick a date</span>
+                              <span>Chọn ngày</span>
                             )}
                             <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
                           </Button>
@@ -240,7 +240,7 @@ function CreateTransactionDialog({ trigger, type }: Props) {
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormDescription>Select a date for this</FormDescription>
+                    <FormDescription>Chọn 1 ngày</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

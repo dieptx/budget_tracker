@@ -65,7 +65,7 @@ function CategoriesCard({
 }) {
   const filteredData = data.filter((el) => el.type === type);
   const total = filteredData.reduce(
-    (acc, el) => (acc + (el?.sum || 0)) as unknown as number,
+    (acc, el) => (acc + (+el?.sum || 0)) as unknown as number,
     0
   );
 
@@ -73,17 +73,17 @@ function CategoriesCard({
     <Card className='h-80 w-full col-span-6'>
       <CardHeader>
         <CardTitle className='grid grid-flow-row justify-between gap-2 text-muted-foreground md:grid-flow-col'>
-          {type === 'income' ? 'Incomes' : 'Expenses'} by category
+          {type === 'income' ? 'Thu nhập' : 'Chi phí'} theo danh mục
         </CardTitle>
       </CardHeader>
 
       <div className='flex items-center justify-between gap-2'>
         {filteredData.length === 0 && (
           <div className='flex h-60 w-full flex-col items-center justify-center'>
-            No data for the selected period
+            Không có dữ liệu cho khoảng thời gian này
             <p className='text-sm text-muted-foreground'>
-              Try selecting a different period or try adding new{' '}
-              {type === 'income' ? 'incomes' : 'expenses'}
+              Thử chọn khoảng thời gian khác hoặc thêm mới{' '}
+              {type === 'income' ? 'thu nhập' : 'chi phí'}
             </p>
           </div>
         )}
@@ -92,7 +92,7 @@ function CategoriesCard({
           <ScrollArea className='h-60 w-full px-4'>
             <div className='flex w-full flex-col gap-4 p-4'>
               {filteredData.map((item) => {
-                const amount: number = (item.sum || 0) as unknown as number;
+                const amount = +(item.sum || 0);
                 const percentage = (amount * 100) / (total || amount);
 
                 return (
