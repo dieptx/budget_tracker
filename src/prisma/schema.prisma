@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id                Int               @id @default(autoincrement())
+  createdAt         DateTime          @default(now()) @db.Date
+  name              String
+  icon              String
+  planAmount        Decimal           @default(0) @db.Decimal(20, 0)
+  type              TransactionType
+  categoryHistories CategoryHistory[]
+  transactions      Transaction[]
+
+  @@unique([name, type])
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+model Transaction {
+  id           String          @id @default(uuid())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  amount       Decimal         @default(0) @db.Decimal(20, 0)
+  description  String
+  date         DateTime        @db.Date
+  userId       String
+  type         TransactionType
+  categoryId   Int
+  category     Category        @relation(fields: [categoryId], references: [id])
+  fundId       Int?
+  fund         Fund?           @relation(fields: [fundId], references: [id])
+  investmentId Int?
+  investment   Investment?     @relation(fields: [investmentId], references: [id])
+  incomeId     Int?
+  income       Income?         @relation(fields: [incomeId], references: [id])
+}
+
+model MonthHistory {
+  userId  String
+  day     Int
+  month   Int
+  year    Int
+  income  Decimal @default(0) @db.Decimal(20, 0)
+  expense Decimal @default(0) @db.Decimal(20, 0)
+
+  @@id([day, month, year, userId])
+}
+
+model YearHistory {
+  userId  String
+  month   Int
+  year    Int
+  income  Decimal @default(0) @db.Decimal(20, 0)
+  expense Decimal @default(0) @db.Decimal(20, 0)
+
+  @@id([month, year, userId])
+}
+
+model Fund {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  type              FundType            @default(daily)
+  description       String?
+  currentAmount     Decimal             @default(0) @db.Decimal(20, 0)
+  targetAmount      Decimal             @default(0) @db.Decimal(20, 0)
+  transactions      Transaction[]
+  fundBudgetHistory FundBudgetHistory[]
+  investments       Investment[]
+}
+
+enum FundType {
+  daily
+  emergency
+  sinking
+  investment
+}
+
+model FundBudgetHistory {
+  id          Int      @id @default(autoincrement())
+  fundId      Int
+  createdDate DateTime @default(now()) @db.Date
+  amount      Decimal  @default(0) @db.Decimal(20, 0)
+
+  fund Fund @relation(fields: [fundId], references: [id])
+
+  @@index(fundId)
+}
+
+model CategoryHistory {
+  id           Int      @id @default(autoincrement())
+  categoryId   Int
+  categoryName String
+  createdDate  DateTime @default(now()) @db.Date
+  amount       Decimal  @default(0) @db.Decimal(20, 0)
+  category     Category @relation(fields: [categoryId], references: [id])
+
+  @@index(categoryId)
+}
+
+model UserSettings {
+  userId   String @id
+  currency String
+}
+
+enum InvestmentType {
+  gold
+  etf
+  stock
+  mutual_fund
+  property
+}
+
+model Investment {
+  id                  Int                 @id @default(autoincrement())
+  description         String?
+  quantity            Float               @default(0.0)
+  unitPrice           Decimal             @default(0) @db.Decimal(20, 2)
+  total               Decimal             @default(0) @db.Decimal(20, 2)
+  createdDate         DateTime            @default(now())
+  investmentType      InvestmentType
+  investmentHistories InvestmentHistory[]
+  transaction         Transaction[]
+  fundId              Int
+
+  fund Fund @relation(fields: [fundId], references: [id])
+}
+
+model InvestmentHistory {
+  id             Int            @id @default(autoincrement())
+  description    String?
+  quantity       Float          @default(0.0)
+  unitPrice      Decimal        @default(0) @db.Decimal(20, 2)
+  total          Decimal        @default(0) @db.Decimal(20, 2)
+  createdDate    DateTime       @default(now()) @db.Date
+  investmentType InvestmentType
+  investmentId   Int
+  investment     Investment     @relation(fields: [investmentId], references: [id])
+}
+
+model Income {
+  id           Int           @id @default(autoincrement())
+  amount       Decimal       @default(0) @db.Decimal(20, 0)
+  description  String?
+  date         DateTime      @default(now()) @db.Date
+  transactions Transaction[]
+}
