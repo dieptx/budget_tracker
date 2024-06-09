@@ -10,8 +10,14 @@ export const navItems: NavItem[] = [
   {
     title: 'Transactions',
     href: '/transactions',
-    icon: 'page',
+    icon: 'billing',
     label: 'transaction',
+  },
+  {
+    title: 'Funds',
+    href: '/funds',
+    icon: 'pizza',
+    label: 'fund',
   },
   {
     title: 'Cài đặt',

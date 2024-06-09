@@ -8,7 +8,11 @@ export async function GET(request: Request) {
     redirect('/sign-in');
   }
 
-  const funds = await prisma.fund.findMany();
+  const funds = await prisma.fund.findMany({
+    orderBy: {
+      id: 'asc',
+    },
+  });
 
   return Response.json(funds);
 }
