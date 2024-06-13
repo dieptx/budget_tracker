@@ -6,6 +6,9 @@ import prisma from '@/lib/prisma';
 import { currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import CreateIncomeDialog from './_components/CreateIncomeDialog';
+import { getUnallocatedIncome } from './_actions/income';
+import DistributeIncomeDialog from './_components/DistributeIncomeDialog';
 
 async function page() {
   const user = await currentUser();
@@ -23,6 +26,14 @@ async function page() {
     redirect('/wizard');
   }
 
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const unallocatedAmount = await getUnallocatedIncome(
+    currentMonth,
+    currentYear
+  );
+
   return (
     <div className='h-full bg-background'>
       <div className='border-b bg-card'>
@@ -30,7 +41,7 @@ async function page() {
           <p className='text-3xl font-bold'>Hello, {user.firstName}! 👋</p>
 
           <div className='flex items-center gap-3'>
-            <CreateTransactionDialog
+            <CreateIncomeDialog
               trigger={
                 <Button
                   variant={'outline'}
@@ -39,16 +50,37 @@ async function page() {
                   Tiền về 🤑
                 </Button>
               }
+            />
+            {unallocatedAmount ? (
+              <DistributeIncomeDialog
+                trigger={
+                  <Button
+                    variant={'outline'}
+                    className='border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 hover:text-white'
+                  >
+                    Phân bổ quỹ 🍀
+                  </Button>
+                }
+              />
+            ) : null}
+            <CreateTransactionDialog
+              trigger={
+                <Button
+                  // variant={'outline'}
+                  className='border-emerald-500 bg-emerald-950 text-white hover:bg-emerald-700 hover:text-white'
+                >
+                  Thu nhập 😤
+                </Button>
+              }
               type='income'
             />
-
             <CreateTransactionDialog
               trigger={
                 <Button
                   variant={'outline'}
                   className='border-rose-500 bg-rose-950 text-white hover:bg-rose-700 hover:text-white'
                 >
-                  Lại chi 😤
+                  Lại phải chi 😤
                 </Button>
               }
               type='expense'

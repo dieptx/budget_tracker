@@ -1,6 +1,5 @@
 'use client';
 
-import { GetCategoriesStatsResponseType } from '@/app/(dashboard)/api/stats/categories/route';
 import SkeletonWrapper from '@/components/SkeletonWrapper';
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';

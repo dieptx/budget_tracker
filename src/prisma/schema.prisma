@@ -150,6 +150,8 @@ model Income {
   id           Int           @id @default(autoincrement())
   amount       Decimal       @default(0) @db.Decimal(20, 0)
   description  String?
+  month        Int
+  year         Int
   date         DateTime      @default(now()) @db.Date
   transactions Transaction[]
 }
